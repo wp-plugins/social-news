@@ -1,0 +1,123 @@
+/*
+Theme Name: Social News
+Version: 1.0
+Author: Johannes Fosseus
+*/
+
+@font-face { font-family: 'TiresiasInfofontRegular'; src: url('fonts/Tiresias_Infofont-webfont.eot'); src: local('☺'), url('fonts/Tiresias_Infofont-webfont.woff') format('woff'), url('fonts/Tiresias_Infofont-webfont.ttf') format('truetype'), url('fonts/Tiresias_Infofont-webfont.svg#webfontVo42gWJR') format('svg'); font-weight: normal; font-style: normal; }
+body { background-color:#E9E9E9; color:#191919; #fff; margin: 0; padding: 0; text-align: center; font-family: Helvetica,Arial,sans-serif }
+a { color:#333; }
+img { border:0 none; }
+ul { list-style-type:none; }
+h1 { font-size: 20px; text-align: center; }
+
+#headerimg { text-align:center; margin:16px 0 10px 0; }
+#headerimg img { border: 0 none; }
+#page { font-size: 13px; line-height:20px; border-left: 3px solid #ddd; border-right: 3px solid #ddd; background-color: white; margin: 0 auto; padding:10px 20px 10px; width: 700px; text-align:left }
+#page h3 { font-size:24px; line-height:30px; margin:0; }
+#page h3 a { text-decoration: none; }
+#single h3.storytitle { margin-bottom: 16px; }
+#page .meta, #page .feedback { font-size:12px; color:#777; }
+#page p { margin: 8px 0 8px 0; }
+#page .sn, #page .post { margin-bottom: 14px; padding-bottom:14px; border-bottom: 1px solid #E5E5E5; }
+#page .storycontent { margin-bottom:6px; }
+#page .storycontent img.wp-post-image { float:left; margin: 6px 14px 10px 0;  }
+#page .storycontent img { float:left; margin: 6px 14px 10px 0; border: 1px solid #E5E5E5; }
+#page .storycontent a { text-decoration: none; }
+#page span.top_date { font-size: 11px; color:#888; }
+#respond h3 { font-size: 16px; }
+.the_footer { font-size: 11px; color:#888; margin-top:20px; }
+.the_footer a { color:#888; }
+
+#page .fb-container { margin:0 0 0 10px; color:#333; border-bottom:1px solid #E5E5E5; padding-bottom:14px; }
+#page .fb-container a.fb_button, a.fb_button_rtl, .fb_button, .fb_button_rtl { margin-top:8px; }
+
+#page .widget-container { margin:20px 0 0 10px; color:#333; }
+#page .widget-container h3.widget-title { font-size:13px; font-weight:bold; color:#333; font-family:"Lucida Sans","Lucida Sans Unicode","Lucida Grande",Verdana,Arial,Helvetica,sans-serif; }
+#page .widget-container ul { margin:0; padding:0; }
+#page .widget-container ul li { margin-bottom:3px; font-size: 12px; }
+#page .widget-container ul li a { color:#333; }
+
+ul.menu { margin:0; padding: 0; }
+ul.menu li { display:inline; margin-right:10px; }
+
+/* index page */
+.content_left { float:left; width: 440px; }
+.content_right { float:right; width: 240px; }
+
+/* spalter page*/
+.content_single_left { float:left; width: 480px; }
+.content_single_right { float:right; width: 200px; }
+
+/* spalter add */
+.content_add_left { float:left; width: 150px; }
+.content_add_right { float:right; width: 550px; }
+.content_add_left h2 { margin:0 0 5px 0; }
+#page .content_add_left p { margin:0 0 20px 0; }
+
+/* main_menu */
+.main_menu { margin: 0 auto 26px auto; padding: 4px 8px 4px; text-align:left; color:#fff; background:#5D5D5D; background:-webkit-gradient(linear, left top, left bottom, from(#5D5D5D), to(#313131)); background:-moz-linear-gradient(top, #5D5D5D, #313131); background:-o-linear-gradient(top, #5D5D5D, #313131); background:linear-gradient(top, #5D5D5D, #313131); }
+.main_menu a { font:12px/16px 'TiresiasInfofontRegular'; color:#fff; font-size:12px; line-height:16px; text-transform:uppercase; letter-spacing:1px; text-decoration: none; }
+.main_menu ul.menu li { padding:0 8px; margin:0;  }
+.main_menu ul.menu li:last-child { float:right; border:none; padding-right:2px; }
+.main_menu ul.menu li.current-menu-item, ul.menu li.current-menu-parent { margin:0; padding:0 2px; }
+.main_menu ul.menu li.current-menu-item a, ul.menu li.current-menu-parent a { padding:0 5px 0 0; -moz-border-radius:1px 1px 0 0; background:none repeat scroll 0 0 #3F8BC8; color:white; display:inline; padding:9px 6px 6px; }
+ 
+/* the widgets this is test */
+#page .content_left .inner_left h3.widget-title { font-size: 14px; margin:0 0 2px 0 }
+#page .content_left .inner_left div.textwidget { font-size: 13px; }
+
+/* get published */
+#page .get_published { background:#F4F4F4; -moz-border-radius:4px; -webkit-border-radius:4px; border-radius:4px; background:-webkit-gradient(linear, left top, left bottom, from(#F4F4F4), to(#EEEEEE)); background:-moz-linear-gradient(top, #F4F4F4, #EEEEEE); background:-o-linear-gradient(top, #F4F4F4, #EEEEEE); background:linear-gradient(top, #F4F4F4, #EEEEEE); padding:12px; }
+#page .get_published h2 { font-family:"Lucida Sans","Lucida Sans Unicode","Lucida Grande",Verdana,Arial,Helvetica,sans-serif; font-size:14px; font-weight:bold; margin:0 0 2px 0; }
+#page .get_published p { font-size:12px; margin:0; }
+#page .get_published .button { -moz-border-radius:4px 4px 4px 4px; background:url("images/arr_right.gif") no-repeat scroll 95% center, -moz-linear-gradient(center top , rgba(68, 148, 213, 0.9), rgba(54, 118, 170, 0.9)) repeat scroll 0 0%, none repeat scroll 0 0 #3676AA; border:1px solid #F8F8F8; color:#FFFFFF; display:block; font-family:"Lucida Sans","Lucida Sans Unicode","Lucida Grande",Verdana,Arial,Helvetica,sans-serif; font-size:12px; font-weight:bold; margin-top:6px; padding:4px 6px; }
+#page .get_published .button a { color:#FFFFFF; text-decoration: none; }
+
+/* The 'add' form */
+.form_list { margin:0; width:520px; }
+.form_list dt { float:left; font-size:13px; font-weight:bold; margin:0; padding:0 15px 0 0; text-align:right; width:90px; }
+.form_list dd { float:left; margin:0 0 10px; width:400px; }
+.form_list dd span.small { font-size: 11px; }
+.form_list_field { -moz-border-radius:3px 3px 3px 3px; border:1px solid #777; font-size:15px; padding:3px; width:400px; font-family:"Lucida Grande",Verdana,Arial,Helvetica,sans-serif;  }
+.form_list_field.short { width:250px;  font-size:13px; }
+.form_list_area_field { -moz-border-radius:3px 3px 3px 3px; border:1px solid #777; font-size:15px; height:340px; padding:3px; width:400px; font-family:"Lucida Grande",Verdana,Arial,Helvetica,sans-serif; }
+.error { border:1px solid #b73c3c; }
+.basicsubmit { -moz-border-radius:4px 4px 4px 4px; background:-moz-linear-gradient(center top , rgba(255, 255, 255, 0.9), rgba(200, 200, 200, 0.9)) repeat scroll 0 0%, none repeat scroll 0 0 #EEEEEE; border:1px solid #A3A3A3; font-size:14px; font-weight:normal; margin:8px 6px 12px 0; padding:5px; }
+#fb img { float:right; margin-left: 10px; border:2px solid #ddd;}
+.sn_post_author_fields { display:none; }
+#msg { background-color:#FBE986; font-size:14px; line-height:24px; }
+.spinner { display:none; margin-left:10px;	}
+
+/* single post */
+.user_metadata { margin-bottom:20px; font-weight: bold; }
+.user_metadata img { margin:5px 0 0 0 }
+
+/* commets */
+h3#comments { font-size: 12px; margin: 20px 0;}
+#comments .navigation { padding: 0 0 18px 0; }
+h3#comments-title, h3#reply-title { color: #000; font-weight: bold; font-size: 20px; margin-bottom: 0; }
+h3#comments-title { padding: 24px 0; }
+.commentlist { list-style: none; margin: 0; padding-left:10px; }
+.commentlist li.comment { border-bottom: 1px solid #e7e7e7; line-height: 24px; margin: 0 0 24px 0; padding: 0 0 0 56px; position: relative; }
+.commentlist li:last-child { border-bottom:none; margin-bottom:0; }
+#comments .comment-body ul, #comments .comment-body ol { margin-bottom: 18px; }
+#comments .comment-body p:last-child { margin-bottom: 6px; }
+#comments .comment-body blockquote p:last-child { margin-bottom: 24px; }
+.commentlist ol { list-style: decimal; }
+.commentlist .avatar { position: absolute; top: 4px; left: 0; }
+.comment-author cite { color: #000; font-style: normal; font-weight: bold; }
+.comment-author .says { font-style: italic; }
+.comment-meta { font-size: 12px; margin: 0 0 10px 0; }
+.comment-meta a:link, .comment-meta a:visited { color: #888; text-decoration: none; }
+.comment-meta a:active, .comment-meta a:hover { color: #FF4B33; }
+.reply { font-size: 12px; padding: 0 0 24px 0; }
+.reply a, a.comment-edit-link { color: #888; }
+.reply a:hover, a.comment-edit-link:hover { color: #FF4B33; }
+.commentlist .children { list-style: none; margin: 0; }
+.commentlist .children li { border: none; margin: 0; }
+.nocomments { display: none; }
+#comments .pingback { margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid #e7e7e7; }
+.commentlist li.comment+li.pingback { margin-top: -6px; }
+#comments .pingback p { color: #888; font-size: 12px; line-height: 18px; display:block; margin: 0; }
+#comments .pingback .url { font-style: italic; font-size: 13px; }
