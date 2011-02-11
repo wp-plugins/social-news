@@ -3,7 +3,7 @@
 Plugin Name: SocialNews
 Plugin URI: http://www.poetleaks.com/about-this/
 Description: Let the vistiors add news to your site
-Version: 1.0
+Version: 1.1
 Author: Johannes Fosseus
 Author URI: http://www.poetleaks.com/
 */
@@ -14,11 +14,15 @@ if (class_exists('socialnews')){
 	$socialnews = new Socialnews();
 }
 
-wp_enqueue_script('socialnews_js', WP_PLUGIN_URL.'/socialnews/socialnews.js', array('jquery'));
-
 // Load js only in backend
 if(is_admin()){
-	wp_enqueue_style('socialnews_css', WP_PLUGIN_URL.'/socialnews/style.css');
+	wp_enqueue_style('socialnews_css', WP_PLUGIN_URL.'/social-news/style.css');
+}
+
+// frontend
+if(!is_admin()){
+	wp_enqueue_script('socialnews_js', WP_PLUGIN_URL.'/social-news/socialnews.js', array('jquery'));
+	wp_enqueue_style('socialnews_css', WP_PLUGIN_URL.'/social-news/style_frontend.css');
 }
 
 // Prints the add-form
@@ -36,7 +40,7 @@ add_action('wp_ajax_nopriv_add_action', 'socialnews_add_callback'); // to the no
 // save new readernews post in the callback
 function socialnews_add_callback() {
 	global $socialnews;
-	
+
 	$title = $_POST['title'];
 	$body_text = $_POST['body_text'];
 	$_wpnonce = $_POST['_wpnonce'];
@@ -56,6 +60,7 @@ function socialnews_add_callback() {
 	echo $result;
 	die;
 }
+
 
 // set an 'active/inactive' option
 if (isset($socialnews)) {

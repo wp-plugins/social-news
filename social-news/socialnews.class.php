@@ -4,11 +4,23 @@ class Socialnews {
 	function __construct(){
 		add_action('init', array( $this, 'createSocialnewsPostType'),1);
 		add_action('init', array(&$this,'adTagsToSn'),2);
+		add_action('admin_menu', array($this,'add_settings_menu'),1);
 		add_action('add_meta_boxes_sn', array(&$this, 'addMetaBoxes')); // add the social news metabox
 		add_action('save_post', array(&$this,'saveSocialnewsMetadata')); // save metabox data
 		add_action('draft_to_publish', array(&$this,'notifyPostAuthor')); // Try to notify the post autor whem we publish
 		add_filter('the_author', array(&$this,'get_sn_author_name')); // modify the author
+		add_filter('the_posts', array(&$this,'add_news_form'));
+		add_filter('pre_get_posts', array(&$this,'get_all_post_types'));
 	}
+
+	// Display all post-types on the 'home' and 'category' page
+	function get_all_post_types($query){
+		if ( ( is_home() OR is_category() OR is_feed() ) && false == $query->query_vars['suppress_filters']){
+			$query->set('post_type', array('post','sn'));
+		}
+		return $query;
+	}
+
 
 	/**
 	 * Add post_tags and categorys to the new sn post_type
@@ -18,6 +30,10 @@ class Socialnews {
 		register_taxonomy_for_object_type('category','sn');
 	}
 
+	// Lägg till en submen i kalendern, för inställningar
+	function add_settings_menu() {
+		add_submenu_page('edit.php?post_type=sn', 'Settings', 'Settings', 'manage_options', __FILE__.'?option=one', array(&$this,'sn_settings'));
+	}
 
 	/**
 	 * Create the socialnews post type
@@ -195,13 +211,15 @@ class Socialnews {
 		// If we have a post_id, we have success
 		if($post_id){
 			$error['success'] = TRUE;
-			$error['successMsg'] = get_option('sn_response_text');
+			$error['successMsg'] = stripslashes(get_option('sn_response_text'));
 			if(empty($error['successMsg'])){
 				$error['successMsg'] = "Thank you for the text!";
 			}
 			$error['post_id'] = $post_id;
 			$return = json_encode($error);
-			$this->notifyAdmin('You have recieved a new Social News post, please login and review. \n\n// the team', $post_id);
+			$this->notifyAdmin('You have recieved a new Social News post, please login and review.
+
+			// the team', $post_id);
 		}
 
 		return $return;
@@ -279,7 +297,9 @@ class Socialnews {
 				$from = get_option('admin_email');
 				$blogname = get_option('blogname');
 				$subject = $blogname." published your text";
-				$msg = "Yes, we did publish your post\n\.And you will find it here: ".get_permalink($post->ID)."\n\n/ The Team";
+				$msg = "Yes, we did publish your post\n\.And you will find it here: ".get_permalink($post->ID)."
+
+				// The Editor";
 				$headers = "From: ".$from."\nReply-To: ".$from;
 				$config = "-f".$from;
 				mail($to, $subject, $msg, $headers, $config);
@@ -304,114 +324,136 @@ class Socialnews {
 
 
 	/**
+	 * Prints the add form
+	 */
+	function add_news_form($posts){
+		global $wp,$wp_query;
+
+		$page_slug = 'add';
+		$page_title = 'Add item';
+
+		if(count($posts) == 0 && (strtolower($wp->request) == $page_slug || $wp->query_vars['page_id'] == $page_slug)){
+			$post = new stdClass;
+			$post->post_title = $page_title;
+			$post->post_content = $this->printSocialNewsForm();
+			$posts[] = $post;
+			$wp_query->is_page = true;
+		}
+
+		return $posts;
+	}
+
+
+	/**
 	 * Print the for where users add their news
 	 */
 	function printSocialNewsForm(){
+
+		$return = "";
 
 		// Get some options from the Template Options page
 		$sn_use_facebook_connect = get_option('sn_use_facebook_connect');
 		$sn_facebook_api_key = get_option('sn_facebook_api_key');
 		$sn_use_recaptcha = get_option('sn_use_recaptcha');
 		$sn_recaptcha_public_key = get_option('sn_recaptcha_public_key');
-		
-		echo "<div id=\"the_form\">";
-		echo "<script type=\"text/javascript\">\n";
-		echo "var ajaxurl = '".admin_url('admin-ajax.php')."'\n";
-		echo "</script>\n";
-		echo "<form id=\"post\" method=\"post\" action=\"#\" name=\"post\">\n";
-		echo "<dl class=\"form_list\">";
-		echo "<dt>";
-			echo "<label for=\"post_title\">Title:</label>";
-		echo "</dt>";
-		echo "<dd>";
-			echo "<input type=\"text\" id=\"title\" value=\"\" tabindex=\"1\" size=\"30\" name=\"post_title\" class=\"form_list_field\">";
-		echo "</dd>";
-		echo "<dt>";
-			echo "<label for=\"body_text\">Text:</label>";
-		echo "</dt>";
-		echo "<dd>";
-			echo "<textarea id=\"body_text\" name=\"body_text\" tabindex=\"2\" cols=\"50\" rows=\"10\" class=\"form_list_area_field\"></textarea><br />";
-		echo "</dd>";
+
+		$return .= "<div id=\"the_form\">";
+		$return .= "<script type=\"text/javascript\">\n";
+		$return .= "var ajaxurl = '".admin_url('admin-ajax.php')."'\n";
+		$return .= "</script>\n";
+		$return .= "<form id=\"post\" method=\"post\" action=\"#\" name=\"post\">\n";
+		$return .= "<dl class=\"form_list\">";
+		$return .= "<dt>";
+		$return .= "<label for=\"post_title\">Title:</label>";
+		$return .= "</dt>";
+		$return .= "<dd>";
+		$return .= "<input type=\"text\" id=\"title\" value=\"\" tabindex=\"1\" size=\"30\" name=\"post_title\" class=\"form_list_field\">";
+		$return .= "</dd>";
+		$return .= "<dt>";
+		$return .= "<label for=\"body_text\">Text:</label>";
+		$return .= "</dt>";
+		$return .= "<dd>";
+		$return .= "<textarea id=\"body_text\" name=\"body_text\" tabindex=\"2\" cols=\"50\" rows=\"10\" class=\"form_list_area_field\"></textarea><br />";
+		$return .= "</dd>";
 		if($sn_use_facebook_connect && $sn_facebook_api_key){
-			echo "<dt>&nbsp;</dt>";
-			echo "<dd>";
-			echo "<div id=\"fb-root\"></div>";
-			echo "<script src=\"http://connect.facebook.net/en_US/all.js\"></script>";
-			echo "<div id=\"fb\">";
-            echo "<div class=\"fb_user_login_text\"><fb:login-button></fb:login-button> Use your Facebook account to login. If you do, we can associate your facebook profile to your text.</div>";
-        	echo "</div>";
- 		    echo "</dd>";
+			$return .= "<dt>&nbsp;</dt>";
+			$return .= "<dd>";
+			$return .= "<div id=\"fb-root\"></div>";
+			$return .= "<script src=\"http://connect.facebook.net/en_US/all.js\"></script>";
+			$return .= "<div id=\"fb\">";
+            $return .= "<div class=\"fb_user_login_text\"><fb:login-button></fb:login-button> Use your Facebook account to login. If you do, we can associate your facebook profile to your text.</div>";
+        	$return .= "</div>";
+ 		    $return .= "</dd>";
 		}
-	    echo "<dt class=\"sn_post_author_fields\">";
-			echo "<label for=\"post_author\">Name:</label>";
-		echo "</dt>";
-		echo "<dd class=\"sn_post_author_fields\">";
-			echo "<input type=\"text\" id=\"post_author_name\" value=\"\" tabindex=\"3\" size=\"30\" name=\"post_author_name\" class=\"form_list_field short\">";
-		echo "</dd>";
-	    echo "<dt>";
-			echo "<label for=\"post_email\">Your e-mail:</label>";
-		echo "</dt>";
-		echo "<dd>";
-			echo "<input type=\"text\" id=\"post_email\" value=\"\" tabindex=\"3\" size=\"30\" name=\"post_email\" class=\"form_list_field short\"><br /><span class=\"small\">(So we can tell you when we publish the text)</span>";
-		echo "</dd>";
+	    $return .= "<dt class=\"sn_post_author_fields\">";
+		$return .= "<label for=\"post_author\">Name:</label>";
+		$return .= "</dt>";
+		$return .= "<dd class=\"sn_post_author_fields\">";
+		$return .= "<input type=\"text\" id=\"post_author_name\" value=\"\" tabindex=\"3\" size=\"30\" name=\"post_author_name\" class=\"form_list_field short\">";
+		$return .= "</dd>";
+	    $return .= "<dt>";
+		$return .= "<label for=\"post_email\">Your e-mail:</label>";
+		$return .= "</dt>";
+		$return .= "<dd>";
+		$return .= "<input type=\"text\" id=\"post_email\" value=\"\" tabindex=\"3\" size=\"30\" name=\"post_email\" class=\"form_list_field short\"></span>";
+		$return .= "</dd>";
 		if($sn_use_facebook_connect && $sn_facebook_api_key){
-		?>
-   	    <script>
-		FB.init({appId: '<?php echo $sn_facebook_api_key; ?>', status: true, cookie: true, xfbml: true});
-        FB.Event.subscribe('auth.login', function(response) {
-        	viewBox();
-      	});
-       	viewBox();
-        function logout() {
-        	FB.logout();
-            var user_box = document.getElementById("fb");
-            user_box.innerHTML = "You signed out from Facebook. Please fill in your name and send your text.";
-            jQuery('#post_author_name').val('');
-            jQuery('.sn_post_author_fields').show();
-      	}
-        function viewBox() {
-        	FB.getLoginStatus(function(response) {
-            	if (response.session) {
-                	var user_box = document.getElementById("fb");
-                    user_box.innerHTML = "<fb:profile-pic uid='loggedinuser' facebook-logo='true'/></fb:profile-pic>Hi, you are logged in as <fb:name uid='loggedinuser' useyou='false' ></fb:name>. Your text will be associated to your facebook profile. If you don't want that, please <a href=\"#\" onclick=\"logout();\">sign out</a>.<br clear=\"all\">";
-                    FB.api(response.session.uid, function(response) {
-                    	jQuery('#post_author_name').val(response.name);
-                        jQuery('.sn_post_author_fields').hide();
-                        jQuery('#the_hiddens').prepend('<input type="hidden" value="' + response.id + '" id="post_facebook_id">');
-                  	});
-             	} else {
-                	jQuery('.sn_post_author_fields').show();
-              	}
-          	FB.XFBML.parse();
-         	});
-       	}
-	    </script>
-		<?php
+			$return .= "<script>";
+			$return .= "FB.init({appId: '".$sn_facebook_api_key."', status: true, cookie: true, xfbml: true});";
+			$return .= "FB.Event.subscribe('auth.login', function(response) {";
+			$return .= "viewBox();";
+			$return .= "});";
+			$return .= "viewBox();";
+			$return .= "function logout() {";
+			$return .= "FB.logout();";
+			$return .= "var user_box = document.getElementById(\"fb\");";
+			$return .= "user_box.innerHTML = \"You signed out from Facebook. Please fill in your name and send your text.\";";
+			$return .= "jQuery('#post_author_name').val('');";
+			$return .= "jQuery('.sn_post_author_fields').show();";
+			$return .= "}";
+			$return .= "function viewBox(){";
+			$return .= "FB.getLoginStatus(function(response){";
+			$return .= "if (response.session){";
+			$return .= "var user_box = document.getElementById(\"fb\");";
+			$return .= "user_box.innerHTML = \"<fb:profile-pic uid=\"loggedinuser\" facebook-logo=\"true\"/></fb:profile-pic>Hi, you are logged in as <fb:name uid=\"loggedinuser\" useyou=\"false\" ></fb:name>. Your text will be associated to your facebook profile. If you don't want that, please <a href=\"#\" onclick=\"logout();\">sign out</a>.<br clear=\"all\">\";";
+			$return .= "FB.api(response.session.uid, function(response){";
+			$return .= "jQuery('#post_author_name').val(response.name);";
+			$return .= "jQuery('.sn_post_author_fields').hide();";
+			$return .= " jQuery('#the_hiddens').prepend('<input type=\"hidden\" value=\"' + response.id + '\" id=\"post_facebook_id\">');";
+			$return .= "});";
+			$return .= "} else {";
+			$return .= "jQuery('.sn_post_author_fields').show();";
+			$return .= "}";
+			$return .= "FB.XFBML.parse();";
+			$return .= "});";
+			$return .= "}";
+			$return .= "</script>";
 		}
 		if($sn_recaptcha_public_key && $sn_use_recaptcha){
 			require_once('recaptchalib.php');
-			echo "<script type=\"text/javascript\">";
-			echo "var RecaptchaOptions = {";
-			echo "theme : 'clean'";
-			echo "};";
-			echo "</script>";
-			echo "<dt>&nbsp;</dt>";
-			echo "<dd>";
-				echo recaptcha_get_html($sn_recaptcha_public_key);
-			echo "</dd>";
+			$return .= "<script type=\"text/javascript\">";
+			$return .= "var RecaptchaOptions = {";
+			$return .= "theme : 'clean'";
+			$return .= "};";
+			$return .= "</script>";
+			$return .= "<dt>&nbsp;</dt>";
+			$return .= "<dd>";
+			$return .= recaptcha_get_html($sn_recaptcha_public_key);
+			$return .= "</dd>";
 		}
-		echo "<dt>&nbsp;</dt>";
-		echo "<dd id=\"the_hiddens\">";
-			echo "<input type=\"hidden\" value=\"".$this->getTheNonce('social-news-nonce')."\" name=\"_wpnonce\" id=\"_wpnonce\">\n";
-			echo "<input type=\"hidden\" value=\"".$this->getCurrentUri()."\" name=\"_wp_http_referer\">\n";
-			echo "<input type=\"hidden\" value=\"sn\" name=\"post_type\" id=\"post_type\">\n";
-			echo "<input type=\"submit\" value=\"Send your text\" tabindex=\"4\" id=\"add_socialnews\" class=\"basicsubmit\">";
-			echo "<span class=\"spinner\"><img src=\"".get_bloginfo('template_directory')."/images/ajax-loader_white.gif\"></span>";
-			echo "<br /><span id=\"msg\"></span>";
-		echo "</dd>";
-		echo "</dl>";
-		echo "</form><br clear=\"all\">";
-		echo "</div>";
+		$return .= "<dt>&nbsp;</dt>";
+		$return .= "<dd id=\"the_hiddens\">";
+		$return .= "<input type=\"hidden\" value=\"".$this->getTheNonce('social-news-nonce')."\" name=\"_wpnonce\" id=\"_wpnonce\">\n";
+		$return .= "<input type=\"hidden\" value=\"".$this->getCurrentUri()."\" name=\"_wp_http_referer\">\n";
+		$return .= "<input type=\"hidden\" value=\"sn\" name=\"post_type\" id=\"post_type\">\n";
+		$return .= "<input type=\"submit\" value=\"Send your text\" tabindex=\"4\" id=\"add_socialnews\" class=\"basicsubmit\">";
+		$return .= "<span class=\"spinner\"><img src=\"".get_bloginfo('template_directory')."/images/ajax-loader_white.gif\"></span>";
+		$return .= "<br /><span id=\"msg\"></span>";
+		$return .= "</dd>";
+		$return .= "</dl>";
+		$return .= "</form><br clear=\"all\">";
+		$return .= "</div>";
+		return $return;
 	}
 
 
@@ -424,7 +466,7 @@ class Socialnews {
 		if($meta['sn_author_name']){
 			$name = $meta['sn_author_name'];
 			if(is_single($post)){
-				$name .= $this->print>ocialFbUserImage($post->ID);
+				$name .= $this->printSocialFbUserImage($post->ID);
 			}
 
 		}
@@ -454,6 +496,146 @@ class Socialnews {
 			$return .= "</script>";
 		}
 		return $return;
+	}
+
+
+	/**
+	 * Save the settings
+	 */
+	function save_settings($options){
+		foreach ($options as $value){
+			update_option($value['id'], $_REQUEST[$value['id']]);
+		}
+		foreach ($options as $value){
+			if(isset($_REQUEST[$value['id']])){
+	       		update_option($value['id'], $_REQUEST[$value['id']]);
+	       	} else {
+	       		delete_option($value['id']);
+	       	}
+		}
+	}
+
+
+	/**
+	 * Display settings page
+	 */
+	function sn_settings(){
+
+		// Options array, here we can add more in the future
+		$options = array (
+		array("type" => "open"),
+		array(
+			"name" => "Use Facebook Connect",
+			"desc" => "",
+			"id" => "sn_use_facebook_connect",
+			"std" => "false",
+			"type" => "checkbox"),
+		array(
+			"name" => "Facebook API Key",
+			"desc" => "",
+			"id" => "sn_facebook_api_key",
+			"std" => "",
+			"type" => "text"),
+		array(
+			"name" => "Use reCaptcha",
+			"desc" => "",
+			"id" => "sn_use_recaptcha",
+			"std" => "true",
+			"type" => "checkbox"),
+		array(
+			"name" => "reCaptcha public key",
+			"desc" => "",
+			"id" => "sn_recaptcha_public_key",
+			"std" => "",
+			"type" => "text"),
+		array(
+			"name" => "reCaptcha private key",
+			"desc" => "",
+			"id" => "sn_recaptcha_private_key",
+			"std" => "",
+			"type" => "text"),
+		array(
+			"name" => "Succsess respons text",
+			"desc" => "Shown after a user send us a text (Thank you for the text...)",
+			"id" => "sn_response_text",
+			"std" => "",
+			"type" => "textarea"),
+		array(
+			"name" => "The editors email",
+			"desc" => "So you will get a notification email after a new post is sent.",
+			"id" => "sn_editor_email",
+			"std" => "",
+			"type" => "text"),
+		array("type" => "close")
+		);
+
+		// If we have a post, pass the options and save
+		if($_POST['save']){
+			$this->save_settings($options);
+			echo "<div class=\"updated\"><p><strong>Saved</strong></p></div>";
+		}
+
+		echo "<div class=\"wrap\">";
+		echo "<div class=\"icon32\" id=\"icon-options-general\"><br></div>";
+		echo "<h2>Settings</h2>";
+		echo "<form method=\"post\">";
+
+		foreach ($options as $value) {
+			switch ($value['type']){
+				case "open":
+					echo "<table class=\"form-table\">";
+				break;
+				case "close":
+					echo "</table>";
+				break;
+				case "text":
+					echo "<tr valign=\"top\">";
+					echo "<th scope=\"row\">".$value['name']."</th>";
+					echo "<td width=\"80%\"><input class=\"regular-text\" name=\"".$value['id']."\" id=\"".$value['id']."\" type=\"".$value['type']."\" value=\"";
+						if(get_settings($value['id']) != ""){
+							echo get_settings($value['id']);
+						} else {
+							echo $value['std'];
+						}
+					echo "\"><br />";
+					echo $value['desc']."</td>";
+					echo "</tr>";
+				break;
+				case "textarea":
+					echo "<tr valign=\"top\">";
+					echo "<th scope=\"row\">".$value['name']."</th>";
+					echo "<td width=\"80%\"><textarea name=\"".$value['id']."\" id=\"".$value['id']."\" rows=\"10\" class=\"large-text code\" type=\"".$value['type']."\">";
+					if(get_settings($value['id']) != ""){
+						echo stripslashes(get_settings($value['id']));
+					} else {
+						echo stripslashes($value['std']);
+					}
+					echo "</textarea><br />";
+					echo $value['desc']."</td>";
+					echo "</tr>";
+				break;
+				case "checkbox":
+					echo "<tr valign=\"top\">";
+					echo "<th scope=\"row\">".$value['name']."</th>";
+					echo "<td>";
+					if(get_settings($value['id'])){
+						$checked = "checked=\"checked\"";
+					} else {
+						$checked = "";
+					}
+					echo "<input type=\"checkbox\" name=\"".$value['id']."\" id=\"".$value['id']."\" value=\"true\"".$checked.">";
+					echo $value['desc']."</td>";
+					echo "</tr>";
+				break;
+			}
+		}
+		echo "</table>";
+		echo "<p class=\"submit\">";
+		echo "<input type=\"submit\" value=\"Save Settings\" class=\"button-primary\" id=\"submit\" name=\"save\">";
+		echo "<input type=\"hidden\" name=\"action\" value=\"save\">";
+		echo "</p>";
+		echo "</form>";
+		echo "</div>";
 	}
 
 

@@ -1,6 +1,6 @@
 === Social-News ===
 Contributors: Johannes Fosseus
-Tags: social journalism
+Tags: social journalism, news, user news
 Requires at least: 3.0
 Tested up to: 3.0
 
@@ -26,6 +26,10 @@ The post form can use reCaptch and Facebook for security and to relate a person 
 6. Done
 
 == Changelog ==
+
+= 1.1 =
+* Removed templates and render the form as a post
+* Lots of code cleanup
 
 = 1.0 =
 * First public version

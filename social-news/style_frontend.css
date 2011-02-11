@@ -1,0 +1,14 @@
+/* The 'add' form frontend */
+.form_list { margin:0; width:520px; }
+.form_list dt { float:left; font-size:13px; font-weight:bold; margin:0; padding:0 15px 0 0; text-align:right; width:90px; }
+.form_list dd { float:left; margin:0 0 10px; width:400px; }
+.form_list dd span.small { font-size: 11px; }
+.form_list_field { -moz-border-radius:3px 3px 3px 3px; border:1px solid #BBBBBB; font-size:15px; padding:3px; width:400px; font-family:"Lucida Grande",Verdana,Arial,Helvetica,sans-serif;  }
+.form_list_field.short { width:250px;  font-size:13px; }
+.form_list_area_field { -moz-border-radius:3px 3px 3px 3px; font-size:15px; height:340px; padding:3px; width:400px; font-family:"Lucida Grande",Verdana,Arial,Helvetica,sans-serif; }
+.error { border:1px solid #b73c3c; }
+.basicsubmit { -moz-border-radius:4px 4px 4px 4px; background:-moz-linear-gradient(center top , rgba(255, 255, 255, 0.9), rgba(200, 200, 200, 0.9)) repeat scroll 0 0%, none repeat scroll 0 0 #EEEEEE; border:1px solid #A3A3A3; font-size:14px; font-weight:normal; margin:8px 6px 12px 0; padding:5px; }
+#fb img { float:right; margin-left: 10px; border:2px solid #ddd;}
+.rn_post_author_fields { display:none; }
+#msg { background-color:#FBE986; font-size:16px; line-height:24px; }
+.spinner { display:none; margin-left:10px;}
