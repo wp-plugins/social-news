@@ -27,6 +27,9 @@ The post form can use reCaptch and Facebook for security and to relate a person 
 
 == Changelog ==
 
+= 1.2 =
+* css cleanup and fixed some unix line-breaks
+
 = 1.1 =
 * Removed templates and render the form as a post, so no more need for a special template
 * Lots of code cleanup
