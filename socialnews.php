@@ -3,7 +3,7 @@
 Plugin Name: SocialNews
 Plugin URI: http://www.poetleaks.com/about-this/
 Description: Let the vistiors add news to your site
-Version: 1.1
+Version: 1.2
 Author: Johannes Fosseus
 Author URI: http://www.poetleaks.com/
 */
